@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initSmoothScrolling();
     initParallaxEffects();
     initInteractiveElements();
+    initPortfolioDropdowns();
 });
 
 // Navigation Functionality
@@ -262,24 +263,6 @@ function initInteractiveElements() {
         });
     });
 
-    // Portfolio items hover effects
-    const portfolioItems = document.querySelectorAll('.portfolio-item');
-    portfolioItems.forEach(item => {
-        item.addEventListener('mouseenter', function() {
-            const overlay = this.querySelector('.portfolio-overlay');
-            if (overlay) {
-                overlay.style.transform = 'translateY(0)';
-            }
-        });
-        
-        item.addEventListener('mouseleave', function() {
-            const overlay = this.querySelector('.portfolio-overlay');
-            if (overlay) {
-                overlay.style.transform = 'translateY(100%)';
-            }
-        });
-    });
-
     // Team member cards
     const teamMembers = document.querySelectorAll('.team-member');
     teamMembers.forEach(member => {
@@ -512,4 +495,181 @@ function throttle(func, limit) {
 // Apply throttling to scroll events
 window.addEventListener('scroll', throttle(function() {
     // Scroll-based animations and effects
-}, 16)); // ~60fps 
+}, 16)); // ~60fps
+
+// Portfolio Dropdown Functionality
+function initPortfolioDropdowns() {
+    const exploreButtons = document.querySelectorAll('.portfolio-overlay .btn');
+    
+    // Sample data for dropdown items
+    const portfolioData = {
+        'Podcasts': [
+            { title: 'No Podcasts as of yet', description: 'Weekly technology podcast', duration: '45 min' }
+        ],
+        'Broadcasts': [
+            { title: 'No Broadcasts as of yet', description: 'Daily morning broadcast', duration: '2 hours' }
+        ]
+    };
+
+    exploreButtons.forEach((button) => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            // Get the portfolio item and check for existing dropdown
+            const portfolioItem = this.closest('.portfolio-item');
+            const existingDropdown = portfolioItem.querySelector('.portfolio-dropdown');
+            
+            // If dropdown already exists, remove it
+            if (existingDropdown) {
+                existingDropdown.style.opacity = '0';
+                existingDropdown.style.transform = 'translateY(-10px)';
+                setTimeout(() => existingDropdown.remove(), 300);
+                return;
+            }
+            
+            // Get the portfolio type based on the overlay text
+            const overlay = this.closest('.portfolio-overlay');
+            const portfolioType = overlay.querySelector('h3').textContent;
+            
+            // Create dropdown
+            const dropdown = createPortfolioDropdown(portfolioData[portfolioType] || portfolioData['Podcasts']);
+            
+            // Position the dropdown below the portfolio-image
+            const portfolioImage = this.closest('.portfolio-image');
+            
+            // Add to the portfolio item
+            portfolioItem.style.position = 'relative';
+            portfolioItem.appendChild(dropdown);
+            
+            // Animate in
+            setTimeout(() => {
+                dropdown.style.opacity = '1';
+                dropdown.style.transform = 'translateY(0)';
+            }, 10);
+        });
+    });
+    
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.portfolio-overlay') && !e.target.closest('.portfolio-dropdown')) {
+            const dropdowns = document.querySelectorAll('.portfolio-dropdown');
+            dropdowns.forEach(dropdown => {
+                dropdown.style.opacity = '0';
+                dropdown.style.transform = 'translateY(-10px)';
+                setTimeout(() => dropdown.remove(), 300);
+            });
+        }
+    });
+}
+
+function createPortfolioDropdown(items) {
+    const dropdown = document.createElement('div');
+    dropdown.className = 'portfolio-dropdown';
+    
+    // Add styles to match portfolio-image card styling
+    dropdown.style.cssText = `
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        padding: 1.5rem;
+        margin-top: 1rem;
+        opacity: 0;
+        transform: translateY(-10px);
+        transition: all 0.3s ease;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        position: relative;
+        overflow: hidden;
+    `;
+    
+    // Create header
+    const header = document.createElement('div');
+    header.style.cssText = `
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    `;
+    
+    const title = document.createElement('h4');
+    title.textContent = 'Available Content';
+    title.style.cssText = `
+        margin: 0;
+        color: #1f2937;
+        font-size: 1.2rem;
+        font-weight: 600;
+    `;
+
+    header.appendChild(title);
+    dropdown.appendChild(header);
+    
+    // Create items list
+    const itemsList = document.createElement('div');
+    itemsList.style.cssText = `
+        max-height: 300px;
+        overflow-y: auto;
+    `;
+    
+    items.forEach(item => {
+        const itemElement = document.createElement('div');
+        itemElement.style.cssText = `
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
+        `;
+        
+        itemElement.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h5 style="margin: 0 0 0.5rem 0; color: #1f2937; font-size: 1rem; font-weight: 600;">${item.title}</h5>
+                    <p style="margin: 0; color: #6b7280; font-size: 0.9rem;">${item.description}</p>
+                </div>
+                <span style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 0.5rem 0.75rem; border-radius: 8px; font-size: 0.8rem; font-weight: 500;">${item.duration}</span>
+            </div>
+        `;
+        
+        // Hover effects
+        itemElement.addEventListener('mouseenter', () => {
+            itemElement.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+            itemElement.style.borderColor = 'rgba(102, 126, 234, 0.3)';
+            itemElement.style.transform = 'translateY(-2px)';
+        });
+        
+        itemElement.addEventListener('mouseleave', () => {
+            itemElement.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+            itemElement.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+            itemElement.style.transform = 'translateY(0)';
+        });
+        
+        // Click handler
+        itemElement.addEventListener('click', () => {
+            // showNotification(`Playing: ${item.title}`, 'success');
+            // Here you could add actual audio playback functionality
+            showNotification(`Contact us to help build this protfolio`);
+            // Redirect to contact form after a short delay
+            setTimeout(() => {
+                const contactSection = document.querySelector('#contact');
+                if (contactSection) {
+                    const offsetTop = contactSection.offsetTop - 70; // Account for fixed navbar
+                    window.scrollTo({
+                        top: offsetTop,
+                        behavior: 'smooth'
+                    });
+                }
+            }, 100);
+        });
+        
+        itemsList.appendChild(itemElement);
+    });
+    
+    dropdown.appendChild(itemsList);
+    
+    return dropdown;
+} 
