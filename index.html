@@ -158,20 +158,32 @@
                     </div>
                 </div>
                 <div class="contact-form">
-                    <form id="contactForm">
+                    <form id="contactForm" action="https://api.web3forms.com/submit" method="POST">
+    
+                        <input type="hidden" name="access_key" value="YOUR_ACCESS_KEY_HERE">
+
+                        <!-- Form Inputs. Each input must have a name="" attribute -->
                         <div class="form-group">
-                            <input type="text" id="name" name="name" placeholder="Your Name" required>
+                            <input type="text" name="name" placeholder="Your Name" required>
                         </div>
                         <div class="form-group">
-                            <input type="email" id="email" name="email" placeholder="Your Email" required>
+                            <input type="email" name="email" placeholder="Your Email" required>
                         </div>
                         <div class="form-group">
                             <input type="text" id="subject" name="subject" placeholder="Subject" required>
                         </div>
                         <div class="form-group">
-                            <textarea id="message" name="message" placeholder="Your Message" rows="5" required></textarea>
+                            <textarea name="message" placeholder="Your Message" required></textarea>
                         </div>
-                        <button type="submit" class="btn btn-primary">Send Message</button>
+
+                        <!-- Honeypot Spam Protection -->
+                        <input type="checkbox" name="botcheck" class="hidden" style="display: none;">
+                    
+                        <!-- Custom Confirmation / Success Page -->
+                        <!-- <input type="hidden" name="redirect" value="https://mywebsite.com/thanks.html"> -->
+                    
+                        <button type="submit" class="btn btn-primary">Submit Form</button>
+                    
                     </form>
                 </div>
             </div>

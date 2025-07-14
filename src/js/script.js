@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', function() {
     initNavigation();
     initScrollAnimations();
     initCounterAnimations();
-    initContactForm();
     initSmoothScrolling();
     initParallaxEffects();
     initInteractiveElements();
@@ -104,56 +103,6 @@ function initCounterAnimations() {
     counters.forEach(counter => {
         counterObserver.observe(counter);
     });
-}
-
-// Contact Form Functionality
-function initContactForm() {
-    const contactForm = document.getElementById('contactForm');
-    
-    if (contactForm) {
-        contactForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // Get form data
-            const formData = new FormData(contactForm);
-            const name = formData.get('name');
-            const email = formData.get('email');
-            const subject = formData.get('subject');
-            const message = formData.get('message');
-
-            // Simple validation
-            if (!name || !email || !subject || !message) {
-                showNotification('Please fill in all fields', 'error');
-                return;
-            }
-
-            if (!isValidEmail(email)) {
-                showNotification('Please enter a valid email address', 'error');
-                return;
-            }
-
-            // Simulate form submission
-            const submitButton = contactForm.querySelector('button[type="submit"]');
-            const originalText = submitButton.textContent;
-            
-            submitButton.textContent = 'Sending...';
-            submitButton.disabled = true;
-
-            // Simulate API call
-            setTimeout(() => {
-                showNotification('Thank you! Your message has been sent successfully.', 'success');
-                contactForm.reset();
-                submitButton.textContent = originalText;
-                submitButton.disabled = false;
-            }, 2000);
-        });
-    }
-}
-
-// Email validation
-function isValidEmail(email) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
 }
 
 // Notification system
@@ -672,4 +621,31 @@ function createPortfolioDropdown(items) {
     dropdown.appendChild(itemsList);
     
     return dropdown;
-} 
+}
+
+/********* Begin JS for the contact form *********/
+// JavaScript for additional email validation
+const form = document.querySelector('#contactForm');
+const email = document.querySelector('#email');
+
+form.addEventListener('submit', function (event) {
+    // Simple email regex for validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(email.value)) {
+        // Prevent form submission if the email is invalid
+        event.preventDefault();
+
+        // Set a custom validity message
+        email.setCustomValidity('Please enter a valid email address.');
+    } else {
+        // Reset the custom validity if the input is valid
+        email.setCustomValidity('');
+    }
+});
+
+// Reset custom validity message on every input change
+email.addEventListener('input', function () {
+    email.setCustomValidity(''); // Reset the custom error on input change
+});
+/********* End JS for the contact form *********/
