@@ -312,7 +312,7 @@ window.addEventListener('load', function() {
     loader.innerHTML = `
         <div class="loader-content">
             <div class="loader-spinner"></div>
-            <p>Loading SUPER K HOLDINGS...</p>
+            <p>Loading KSK VOICE STUDIO...</p>
         </div>
     `;
     
