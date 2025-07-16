@@ -1,3 +1,5 @@
+document.getElementById('current-year').textContent = new Date().getFullYear();
+
 // DOM Content Loaded
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize all functionality
